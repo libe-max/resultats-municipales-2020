@@ -13,8 +13,8 @@ const config = {
   },
   tracking: {
     active: false,
-    format: 'libe-apps-template',
-    article: 'libe-apps-template'
+    format: 'resultats-municipales-2020',
+    article: 'resultats-municipales-2020'
   },
   show_header: true,
   statics_url: process.env.NODE_ENV === 'production'
@@ -24,7 +24,7 @@ const config = {
     ? 'https://libe-labo-2.site/api'
     : `${currentProtocol}//${currentHostname}:3004/api`,
   stylesheet: 'libe-apps-template.css', // The name of the css file hosted at ${statics_url}/styles/apps/
-  spreadsheet: undefined // The spreadsheet providing data to the app
+  spreadsheet: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQtrW86T9T9ZmOcV8PPBcVcC32U9rOy3siUr8NXnK3JG9QRnQ8g-CYuTBbBJspeJ7HEXF62zZw3gWL/pub?gid=1731761155&single=true&output=tsv' // The spreadsheet providing data to the app
 }
 
 module.exports = config
