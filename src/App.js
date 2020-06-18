@@ -19,7 +19,8 @@ export default class App extends Component {
       loading_sheet: true,
       error_sheet: null,
       data_sheet: [],
-      active_page: 'paris',
+      active_page: window.location.href.split('/#')[1] || 'paris',
+      details_display_mode: 'votes',
       keystrokes_history: [],
       konami_mode: false
     }
@@ -28,6 +29,7 @@ export default class App extends Component {
     this.listenToKeyStrokes = this.listenToKeyStrokes.bind(this)
     this.watchKonamiCode = this.watchKonamiCode.bind(this)
     this.handleActivatePageClick = this.handleActivatePageClick.bind(this)
+    this.handleDetailSelectChange = this.handleDetailSelectChange.bind(this)
   }
 
   /* * * * * * * * * * * * * * * * *
@@ -102,7 +104,7 @@ export default class App extends Component {
       const reach = await window.fetch(this.props.spreadsheet)
       if (!reach.ok) throw reach
       const data = await reach.text()
-      const parsedData = parseTsv(data, [18, 18, 18, 29]) // Parse sheet here
+      const parsedData = parseTsv(data, [18, 18, 18, 36, 2]) // Parse sheet here
       const sectorStrToNbrData = sector => ({
         ...sector,
         seats: parseFloat(sector.seats),
@@ -137,7 +139,8 @@ export default class App extends Component {
             { name: city.list6, short_name: city.short6, head: city.head6, color: city.color6, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
             { name: city.list7, short_name: city.short7, head: city.head7, color: city.color7, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 }
           ]
-        }))
+        })),
+        texts: parsedData[4].map(e => e.text)
       }
       const parisLists = transformedData.lists.find(city => city.city === 'paris')
       const marseilleLists = transformedData.lists.find(city => city.city === 'marseille')
@@ -242,9 +245,7 @@ export default class App extends Component {
           lyonLists.lists[6].estimSeats += sector.R7
         }
       })
-
-      const stateData = transformedData
-      this.setState({ loading_sheet: false, error_sheet: null, data_sheet: stateData })
+      this.setState({ loading_sheet: false, error_sheet: null, data_sheet: transformedData })
       return data
     } catch (error) {
       if (error.status) {
@@ -286,13 +287,27 @@ export default class App extends Component {
 
   /* * * * * * * * * * * * * * * * *
    *
-   * WATCH KONAMI CODE
+   * HANDLE ACTIVATE PAGE CLICK
    *
    * * * * * * * * * * * * * * * * */
   handleActivatePageClick (e, value) {
     this.setState(current => ({
       ...current,
       active_page: value
+    }))
+  }
+
+  /* * * * * * * * * * * * * * * * *
+   *
+   * HANDLE DETAILS SELECT CHANGE
+   *
+   * * * * * * * * * * * * * * * * */
+  handleDetailSelectChange (e) {
+    if (!e || !e.target) return
+    const mode = e.target.value
+    this.setState(current => ({
+      ...current,
+      details_display_mode: mode
     }))
   }
 
@@ -317,6 +332,9 @@ export default class App extends Component {
     const currentCity = state.data_sheet[state.active_page]
     const nbSeats = currentCity.reduce((acc, curr) => acc + curr.seats, 0)
     const nbSeatsToWin = Math.ceil(nbSeats / 2)
+    const nbOkSeats = currentCity.reduce((acc, curr) => curr.status === 'ok' ? acc + curr.seats : acc, 0)
+    const nbEstimSeats = currentCity.reduce((acc, curr) => curr.status === 'estim' ? acc + curr.seats : acc, 0)
+    const nbNotSureSeats = nbSeats - nbOkSeats
     const nbSectors = currentCity.length
     const nbSectorsOk = currentCity.filter(sector => sector.status === 'ok').length
     const nbSectorsEstim = currentCity.filter(sector => sector.status === 'estim').length
@@ -324,28 +342,102 @@ export default class App extends Component {
     const currentLists = state.data_sheet.lists.find(city => city.city === state.active_page)
     const okWinner = currentLists.lists.find(list => list.okSeats >= nbSeatsToWin)
     const estimWinner = currentLists.lists.find(list => (list.okSeats + list.estimSeats) >= nbSeatsToWin)
+    const isOver = nbSectorsOk === nbSectors
+    const isOverAndNoWinner = isOver && !okWinner
+    const listsThatStillCanWin = currentLists.lists.map(list => ({
+      ...list,
+      can_win: (nbSeatsToWin - list.okSeats) < nbNotSureSeats
+    }))
+    const notOverButNoWinner = !isOver && !listsThatStillCanWin.length
 
-    console.log(okWinner)
     console.log(estimWinner)
 
     /* Display component */
     return <div className={classes.join(' ')}>
+
+      {/* HEAD */}
       <h1>Titre</h1>
       <h2>Sous titre</h2>
+      <ShareArticle short iconsOnly tweet={props.meta.tweet} url={props.meta.url} />
+
+      {/* NAV */}
       <nav>
         <a href='/#paris' onClick={e => this.handleActivatePageClick(e, 'paris')}>Paris</a>
         <a href='/#marseille' onClick={e => this.handleActivatePageClick(e, 'marseille')}>Marseille</a>
         <a href='/#lyon' onClick={e => this.handleActivatePageClick(e, 'lyon')}>Lyon</a>
       </nav>
-      <h1>{state.active_page} {nbSeats}</h1>
+
+      {/* SUMMARY */}
       <div>{
-        nbSectorsOk > 1
-        ? `${nbSectorsOk} secteurs dépouillés sur ${nbSectors}`
-        : `${nbSectorsOk} secteur dépouillé sur ${nbSectors}`
+        nbSectorsOk < 1
+        ? `Aucun secteur n'a encore été dépouillé sur un total de ${nbSectors}`
+        : nbSectorsOk === 1
+        ? `${nbSectorsOk} secteur dépouillé sur ${nbSectors}`
+        : `${nbSectorsOk} secteurs dépouillés sur ${nbSectors}`
       }</div>
-      <pre>{
-        JSON.stringify(currentCity, null, 2)
-      }</pre>
+      <div>{
+        okWinner && isOver
+        ? `La liste ${okWinner.name} menée par ${okWinner.head} remporte la majorité absolue avec ${okWinner.okSeats} sièges !`
+        : okWinner && !isOver
+        ? `La liste ${okWinner.name} menée par ${okWinner.head} remporte la majorité absolue avec au moins ${okWinner.okSeats} sièges !`
+        : estimWinner
+        ? `Selon les estimations, la liste ${estimWinner.name} menée par ${estimWinner.head} remporte la majorité absolue avec au moins ${estimWinner.okSeats + estimWinner.estimSeats} sièges !`
+        : isOverAndNoWinner
+        ? `Tous les sièges sont attribués et aucune liste ne prend la majorité absolue. Ça va encore être magouille et compagnie cette affaire.`
+        : notOverButNoWinner
+        ? `Le dépouillement n'est pas terminé mais aucune liste ne pourra prendre la majorité absolue à l'issue de celui-ci. Tant pis, pas de maire.`
+        : ``
+      }</div>
+
+      {/* RESULTS */}
+      <div>{
+        [...currentLists.lists]
+          .sort((a, b) => (b.okSeats + b.estimSeats) - (a.okSeats + a.estimSeats))
+          .filter(list => list.name)
+          .map(list => <div>{list.name} {list.head} – {list.okSeats} ok, {list.estimSeats} estimés – {nbSeatsToWin} sièges pour gagner, {nbSeats} sièges au total</div>)
+      }</div>
+      <div>LÉGENDE</div>
+
+      {/* DETAIL */}
+      <div>
+        <h3>Par secteur</h3>
+        <div>LÉGENDE</div>
+        <select
+          defaultValue={state.details_display_mode}
+          onChange={this.handleDetailSelectChange}>
+          <option value='votes'>Voix obtenues</option>
+          <option value='seats'>Sièges obtenus</option>
+        </select>
+        {currentCity.map(sector => {
+          return state.details_display_mode === 'votes'
+            ? <div>
+              <div><strong>{sector.sector} - {sector.status} - {sector.expr} votes exprimés – {sector.seats} sièges</strong></div>
+              <div>{
+                currentLists.lists.map((list, i) => {
+                  if (!list.name) return <span />
+                  const votes = sector[`list${i+1}`]
+                  const percent = Math.round(1000 * votes / sector.expr) / 10
+                  return <span>| {list.name}, {votes} votes, {percent} % |</span>
+                })
+              }</div>
+              <br/>
+            </div>
+            : <div>
+              <div><strong>{sector.sector} - {sector.status} - {sector.expr} votes exprimés – {sector.seats} sièges</strong></div>
+              <div>{
+                currentLists.lists.map((list, i) => {
+                  if (!list.name) return <span />
+                  const seats = sector[`R${i+1}`]
+                  const totalSeats = sector.seats
+                  return <span>| {list.name}, {seats} sièges |</span>
+                })
+              }</div>
+              <br/>
+            </div>
+        })}
+      </div>
+
+      {/* FOOTER */}
       <div className='lblb-default-apps-footer'>
         <ShareArticle short iconsOnly tweet={props.meta.tweet} url={props.meta.url} />
         <ArticleMeta
