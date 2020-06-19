@@ -342,7 +342,7 @@ export default class App extends Component {
     const nbSectorsKo = currentCity.filter(sector => sector.status === 'ko').length
     const currentLists = state.data_sheet.lists.find(city => city.city === state.active_page)
     const okWinner = currentLists.lists.find(list => list.okSeats >= nbSeatsToWin)
-    const estimWinner = currentLists.lists.find(list => (list.okSeats + list.estimSeats) >= nbSeatsToWin - 30)
+    const estimWinner = currentLists.lists.find(list => (list.okSeats + list.estimSeats) >= nbSeatsToWin)
     const isOver = nbSectorsOk === nbSectors
     const isOverAndNoWinner = isOver && !okWinner
     const listsThatStillCanWin = currentLists.lists.map(list => ({
