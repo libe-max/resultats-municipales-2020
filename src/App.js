@@ -4,6 +4,7 @@ import LoadingError from 'libe-components/lib/blocks/LoadingError'
 import ShareArticle from 'libe-components/lib/blocks/ShareArticle'
 import LibeLaboLogo from 'libe-components/lib/blocks/LibeLaboLogo'
 import ArticleMeta from 'libe-components/lib/blocks/ArticleMeta'
+import JSXInterpreter from 'libe-components/lib/logic/JSXInterpreter'
 import { parseTsv } from 'libe-utils'
 
 export default class App extends Component {
@@ -341,7 +342,7 @@ export default class App extends Component {
     const nbSectorsKo = currentCity.filter(sector => sector.status === 'ko').length
     const currentLists = state.data_sheet.lists.find(city => city.city === state.active_page)
     const okWinner = currentLists.lists.find(list => list.okSeats >= nbSeatsToWin)
-    const estimWinner = currentLists.lists.find(list => (list.okSeats + list.estimSeats) >= nbSeatsToWin)
+    const estimWinner = currentLists.lists.find(list => (list.okSeats + list.estimSeats) >= nbSeatsToWin - 30)
     const isOver = nbSectorsOk === nbSectors
     const isOverAndNoWinner = isOver && !okWinner
     const listsThatStillCanWin = currentLists.lists.map(list => ({
@@ -350,42 +351,100 @@ export default class App extends Component {
     }))
     const notOverButNoWinner = !isOver && !listsThatStillCanWin.length
 
-    console.log(estimWinner)
+    /* Texts */
+    const fillTextTemplates = (str = '') => {
+      return str
+        .split('<<URL>>').join(window.location.href)
+        .split('<<CURRENT CITY>>').join(`${state.active_page.slice(0, 1).toUpperCase()}${state.active_page.slice(1)}`)
+        .split('<<NB SEATS>>').join(nbSeats)
+        .split('<<NB SEATS TO WIN>>').join(nbSeatsToWin)
+        .split('<<NB OK SEATS>>').join(nbOkSeats)
+        .split('<<NB ESTIM SEATS>>').join(nbEstimSeats)
+        .split('<<NB OK+ESTIM SEATS>>').join(nbOkSeats + nbEstimSeats)
+        .split('<<NB SECTORS>>').join(nbSectors)
+        .split('<<NB SECTORS OK>>').join(nbSectorsOk)
+        .split('<<NB SECTORS ESTIM>>').join(nbSectorsEstim)
+        .split('<<NB SECTORS OK+ESTIM>>').join(nbSectorsOk + nbSectorsEstim)
+        .split('<<NB SECTORS KO>>').join(nbSectorsKo)
+        .split('<<OK WINNER NAME>>').join(okWinner ? okWinner.name : '')
+        .split('<<OK WINNER SHORT NAME>>').join(okWinner ? okWinner.short_name : '')
+        .split('<<OK WINNER HEAD>>').join(okWinner ? okWinner.head : '')
+        .split('<<OK WINNER COLOR>>').join(okWinner ? okWinner.color : '')
+        .split('<<OK WINNER OK SEATS>>').join(okWinner ? okWinner.okSeats : '')
+        .split('<<OK WINNER OK VOTES>>').join(okWinner ? okWinner.okVotes : '')
+        .split('<<OK WINNER ESTIM SEATS>>').join(okWinner ? okWinner.estimSeats : '')
+        .split('<<OK WINNER ESTIM VOTES>>').join(okWinner ? okWinner.estimVotes : '')
+        .split('<<OK WINNER OK+ESTIM SEATS>>').join(okWinner ? okWinner.okSeats + okWinner.estimSeats : '')
+        .split('<<OK WINNER OK+ESTIM VOTES>>').join(okWinner ? okWinner.okVotes + okWinner.estimVotes : '')
+        .split('<<ESTIM WINNER NAME>>').join(estimWinner ? estimWinner.name : '')
+        .split('<<ESTIM WINNER SHORT NAME>>').join(estimWinner ? estimWinner.short_name : '')
+        .split('<<ESTIM WINNER HEAD>>').join(estimWinner ? estimWinner.head : '')
+        .split('<<ESTIM WINNER COLOR>>').join(estimWinner ? estimWinner.color : '')
+        .split('<<ESTIM WINNER OK SEATS>>').join(estimWinner ? estimWinner.okSeats : '')
+        .split('<<ESTIM WINNER OK VOTES>>').join(estimWinner ? estimWinner.okVotes : '')
+        .split('<<ESTIM WINNER ESTIM SEATS>>').join(estimWinner ? estimWinner.estimSeats : '')
+        .split('<<ESTIM WINNER ESTIM VOTES>>').join(estimWinner ? estimWinner.estimVotes : '')
+        .split('<<ESTIM WINNER OK+ESTIM SEATS>>').join(estimWinner ? estimWinner.okSeats + estimWinner.estimSeats : '')
+        .split('<<ESTIM WINNER OK+ESTIM VOTES>>').join(estimWinner ? estimWinner.okVotes + estimWinner.estimVotes : '')
+        .split('<').join('')
+        .split('>').join('')
+    }
+    const stateTexts = state.data_sheet.texts
+    const texts = {
+      title: fillTextTemplates(stateTexts[0]),
+      subtitle: fillTextTemplates(stateTexts[1]),
+      tweet: fillTextTemplates(stateTexts[2]),
+      first_tab: fillTextTemplates(stateTexts[3]),
+      second_tab: fillTextTemplates(stateTexts[4]),
+      third_tab: fillTextTemplates(stateTexts[5]),
+      no_sector_ok: fillTextTemplates(stateTexts[6]),
+      one_sector_ok: fillTextTemplates(stateTexts[7]),
+      many_sectors_ok: fillTextTemplates(stateTexts[8]),
+      has_ok_winner_and_is_over: fillTextTemplates(stateTexts[9]),
+      has_ok_winner_and_not_over: fillTextTemplates(stateTexts[10]),
+      has_estim_winner: fillTextTemplates(stateTexts[11]),
+      impossible_winner_and_is_over: fillTextTemplates(stateTexts[12]),
+      impossible_winner_and_not_over: fillTextTemplates(stateTexts[13]),
+      detail_headline: fillTextTemplates(stateTexts[14]),
+      detail_votes_view_select: fillTextTemplates(stateTexts[15]),
+      detail_seats_view_select: fillTextTemplates(stateTexts[16])
+    }
+    console.log(texts)
 
     /* Display component */
     return <div className={classes.join(' ')}>
 
       {/* HEAD */}
-      <h1>Titre</h1>
-      <h2>Sous titre</h2>
-      <ShareArticle short iconsOnly tweet={props.meta.tweet} url={props.meta.url} />
+      <h1><JSXInterpreter content={texts.title} /></h1>
+      <h2><JSXInterpreter content={texts.subtitle} /></h2>
+      <ShareArticle short iconsOnly tweet={texts.tweet} url={' '} />
 
       {/* NAV */}
       <nav>
-        <a href='/#paris' onClick={e => this.handleActivatePageClick(e, 'paris')}>Paris</a>
-        <a href='/#marseille' onClick={e => this.handleActivatePageClick(e, 'marseille')}>Marseille</a>
-        <a href='/#lyon' onClick={e => this.handleActivatePageClick(e, 'lyon')}>Lyon</a>
+        <a href='/#paris' onClick={e => this.handleActivatePageClick(e, 'paris')}><JSXInterpreter content={texts.first_tab} /></a>
+        <a href='/#marseille' onClick={e => this.handleActivatePageClick(e, 'marseille')}><JSXInterpreter content={texts.second_tab} /></a>
+        <a href='/#lyon' onClick={e => this.handleActivatePageClick(e, 'lyon')}><JSXInterpreter content={texts.third_tab} /></a>
       </nav>
 
       {/* SUMMARY */}
       <div>{
         nbSectorsOk < 1
-        ? `Aucun secteur n'a encore été dépouillé sur un total de ${nbSectors}`
+        ? <JSXInterpreter content={texts.no_sector_ok} />
         : nbSectorsOk === 1
-        ? `${nbSectorsOk} secteur dépouillé sur ${nbSectors}`
-        : `${nbSectorsOk} secteurs dépouillés sur ${nbSectors}`
+        ? <JSXInterpreter content={texts.one_sector_ok} />
+        : <JSXInterpreter content={texts.many_sectors_ok} />
       }</div>
       <div>{
         okWinner && isOver
-        ? `La liste ${okWinner.name} menée par ${okWinner.head} remporte la majorité absolue avec ${okWinner.okSeats} sièges !`
+        ? <JSXInterpreter content={texts.has_ok_winner_and_is_over} />
         : okWinner && !isOver
-        ? `La liste ${okWinner.name} menée par ${okWinner.head} remporte la majorité absolue avec au moins ${okWinner.okSeats} sièges !`
+        ? <JSXInterpreter content={texts.has_ok_winner_and_not_over} />
         : estimWinner
-        ? `Selon les estimations, la liste ${estimWinner.name} menée par ${estimWinner.head} remporte la majorité absolue avec au moins ${estimWinner.okSeats + estimWinner.estimSeats} sièges !`
+        ? <JSXInterpreter content={texts.has_estim_winner} />
         : isOverAndNoWinner
-        ? `Tous les sièges sont attribués et aucune liste ne prend la majorité absolue. Ça va encore être magouille et compagnie cette affaire.`
+        ? <JSXInterpreter content={texts.impossible_winner_and_is_over} />
         : notOverButNoWinner
-        ? `Le dépouillement n'est pas terminé mais aucune liste ne pourra prendre la majorité absolue à l'issue de celui-ci. Tant pis, pas de maire.`
+        ? <JSXInterpreter content={texts.impossible_winner_and_not_over} />
         : ``
       }</div>
 
@@ -400,13 +459,13 @@ export default class App extends Component {
 
       {/* DETAIL */}
       <div>
-        <h3>Par secteur</h3>
+        <h3><JSXInterpreter content={texts.detail_headline} /></h3>
         <div>LÉGENDE</div>
         <select
           defaultValue={state.details_display_mode}
           onChange={this.handleDetailSelectChange}>
-          <option value='votes'>Voix obtenues</option>
-          <option value='seats'>Sièges obtenus</option>
+          <option value='votes'>{texts.detail_votes_view_select}</option>
+          <option value='seats'>{texts.detail_seats_view_select}</option>
         </select>
         {currentCity.map(sector => {
           return state.details_display_mode === 'votes'

@@ -5,7 +5,7 @@ const config = {
   meta: {
     author: 'Libé Labo',
     title: 'Libération - ',
-    url: '',
+    url: '/apps/2020/06/resultats-municipales-2020',
     description: '',
     image: '',
     xiti_id: 'test',
