@@ -5,6 +5,9 @@ import ShareArticle from 'libe-components/lib/blocks/ShareArticle'
 import LibeLaboLogo from 'libe-components/lib/blocks/LibeLaboLogo'
 import ArticleMeta from 'libe-components/lib/blocks/ArticleMeta'
 import JSXInterpreter from 'libe-components/lib/logic/JSXInterpreter'
+import PageTitle from 'libe-components/lib/text-levels/PageTitle'
+import BlockTitle from 'libe-components/lib/text-levels/BlockTitle'
+import Paragraph from 'libe-components/lib/text-levels/Paragraph'
 import { parseTsv } from 'libe-utils'
 
 export default class App extends Component {
@@ -386,8 +389,8 @@ export default class App extends Component {
         .split('<<ESTIM WINNER ESTIM VOTES>>').join(estimWinner ? estimWinner.estimVotes : '')
         .split('<<ESTIM WINNER OK+ESTIM SEATS>>').join(estimWinner ? estimWinner.okSeats + estimWinner.estimSeats : '')
         .split('<<ESTIM WINNER OK+ESTIM VOTES>>').join(estimWinner ? estimWinner.okVotes + estimWinner.estimVotes : '')
-        .split('<').join('')
-        .split('>').join('')
+        .split('<<').join('')
+        .split('>>').join('')
     }
     const stateTexts = state.data_sheet.texts
     const texts = {
@@ -409,53 +412,73 @@ export default class App extends Component {
       detail_votes_view_select: fillTextTemplates(stateTexts[15]),
       detail_seats_view_select: fillTextTemplates(stateTexts[16])
     }
-    console.log(texts)
 
     /* Display component */
     return <div className={classes.join(' ')}>
 
       {/* HEAD */}
-      <h1><JSXInterpreter content={texts.title} /></h1>
-      <h2><JSXInterpreter content={texts.subtitle} /></h2>
-      <ShareArticle short iconsOnly tweet={texts.tweet} url={' '} />
+      <div className='head'>
+        <img className='head__logo' src='https://www.liberation.fr/apps/2019/12/a-la-une-des-municipales/logo.svg' />
+        <span className='head__title'><PageTitle small><JSXInterpreter content={texts.title} /></PageTitle></span>
+        <span className='head__subtitle'><Paragraph literary><JSXInterpreter content={texts.subtitle} /></Paragraph></span>
+        <span className='head__share'><ShareArticle short iconsOnly tweet={texts.tweet} url={' '} /></span>
+      </div>
 
-      {/* NAV */}
-      <nav>
-        <a href='/#paris' onClick={e => this.handleActivatePageClick(e, 'paris')}><JSXInterpreter content={texts.first_tab} /></a>
-        <a href='/#marseille' onClick={e => this.handleActivatePageClick(e, 'marseille')}><JSXInterpreter content={texts.second_tab} /></a>
-        <a href='/#lyon' onClick={e => this.handleActivatePageClick(e, 'lyon')}><JSXInterpreter content={texts.third_tab} /></a>
+      {/* TABS */}
+      <nav className='tabs'>
+        <a href='/#paris'
+          className={state.active_page === 'paris' ? 'tabs__tab tabs__tab_active' : 'tabs__tab'}
+          onClick={e => this.handleActivatePageClick(e, 'paris')}>
+          <Paragraph><JSXInterpreter content={texts.first_tab} /></Paragraph>
+        </a>
+        <a href='/#marseille'
+          className={state.active_page === 'marseille' ? 'tabs__tab tabs__tab_active' : 'tabs__tab'}
+          onClick={e => this.handleActivatePageClick(e, 'marseille')}>
+          <Paragraph><JSXInterpreter content={texts.second_tab} /></Paragraph>
+        </a>
+        <a href='/#lyon'
+          className={state.active_page === 'lyon' ? 'tabs__tab tabs__tab_active' : 'tabs__tab'}
+          onClick={e => this.handleActivatePageClick(e, 'lyon')}>
+          <Paragraph><JSXInterpreter content={texts.third_tab} /></Paragraph>
+        </a>
       </nav>
 
       {/* SUMMARY */}
-      <div>{
-        nbSectorsOk < 1
-        ? <JSXInterpreter content={texts.no_sector_ok} />
-        : nbSectorsOk === 1
-        ? <JSXInterpreter content={texts.one_sector_ok} />
-        : <JSXInterpreter content={texts.many_sectors_ok} />
-      }</div>
-      <div>{
-        okWinner && isOver
-        ? <JSXInterpreter content={texts.has_ok_winner_and_is_over} />
-        : okWinner && !isOver
-        ? <JSXInterpreter content={texts.has_ok_winner_and_not_over} />
-        : estimWinner
-        ? <JSXInterpreter content={texts.has_estim_winner} />
-        : isOverAndNoWinner
-        ? <JSXInterpreter content={texts.impossible_winner_and_is_over} />
-        : notOverButNoWinner
-        ? <JSXInterpreter content={texts.impossible_winner_and_not_over} />
-        : ``
-      }</div>
+      <div className='summary'>
+        <div className='summary__sectors'>
+          <BlockTitle small>{
+            nbSectorsOk < 1
+            ? <JSXInterpreter content={texts.no_sector_ok} />
+            : nbSectorsOk === 1
+            ? <JSXInterpreter content={texts.one_sector_ok} />
+            : <JSXInterpreter content={texts.many_sectors_ok} />
+          }</BlockTitle>
+        </div>
+        <div className='summary__winner'>
+          <Paragraph>{
+            okWinner && isOver
+            ? <JSXInterpreter content={texts.has_ok_winner_and_is_over} />
+            : okWinner && !isOver
+            ? <JSXInterpreter content={texts.has_ok_winner_and_not_over} />
+            : estimWinner
+            ? <JSXInterpreter content={texts.has_estim_winner} />
+            : isOverAndNoWinner
+            ? <JSXInterpreter content={texts.impossible_winner_and_is_over} />
+            : notOverButNoWinner
+            ? <JSXInterpreter content={texts.impossible_winner_and_not_over} />
+            : ``
+          }</Paragraph>
+        </div>
+       </div>
 
       {/* RESULTS */}
+      <div>LÉGENDE</div>
       <div>{
         [...currentLists.lists]
           .sort((a, b) => (b.okSeats + b.estimSeats) - (a.okSeats + a.estimSeats))
           .filter(list => list.name)
           .map(list => <div>{list.name} {list.head} – {list.okSeats} ok, {list.estimSeats} estimés – {nbSeatsToWin} sièges pour gagner, {nbSeats} sièges au total</div>)
       }</div>
-      <div>LÉGENDE</div>
 
       {/* DETAIL */}
       <div>
