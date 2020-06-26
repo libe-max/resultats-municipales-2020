@@ -1,0 +1,269 @@
+/* * * * * * * * * * * * * * * * * 
+ *
+ * HEAD
+ *
+ * * * * * * * * * * * * * * * * */
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.head__logo {
+  max-width: 12rem;
+  margin-bottom: 2rem;
+}
+
+.head__title {
+  margin-bottom: 1rem;
+  max-width: 38rem;
+  text-align: center;
+}
+
+.head__title .lblb-page-title h1 {
+  font-family: 'Libe-Sans-Semicondensed';
+}
+
+.head__subtitle {
+  margin-bottom: 2rem;
+  max-width: 38rem;
+  text-align: center;
+}
+
+.head__subtitle .lblb-paragraph a {
+  text-transform: uppercase;
+  font-family: 'Synthese';
+  font-size: .8em;
+  color: #1B4AB8;
+  border-bottom-color: #1B4AB8;
+}
+
+.head__share {
+  width: 14rem;
+  max-width: 100%;
+}
+
+/* * * * * * * * * * * * * * * * * 
+ *
+ * TABS
+ *
+ * * * * * * * * * * * * * * * * */
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.tabs__tab {
+  padding: .5rem;
+  background: #FFFFFF;
+  border: #1B4AB8 .125rem solid;
+  margin: 0 .5rem;
+  box-shadow: .25rem .25rem 0 0 rgba(33, 33, 33, .2);
+}
+
+.tabs__tab .lblb-paragraph {
+  color: #1B4AB8;
+}
+
+.tabs__tab:hover,
+.tabs__tab.tabs__tab_active {
+  background: #1B4AB8;
+}
+
+.tabs__tab:hover .lblb-paragraph,
+.tabs__tab.tabs__tab_active .lblb-paragraph {
+  color: #FFFFFF;
+}
+
+/* * * * * * * * * * * * * * * * * 
+ *
+ * SUMMARY
+ *
+ * * * * * * * * * * * * * * * * */
+
+.summary {
+  border-top: #212121 .25rem solid;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.summary__sectors {
+  margin-top: 2rem;
+}
+
+.summary__winner {
+  margin-top: .5rem;
+  margin-bottom: 1rem;
+  max-width: 32rem;
+  text-align: center;
+}
+
+/* * * * * * * * * * * * * * * * * 
+ *
+ * RESULTS
+ *
+ * * * * * * * * * * * * * * * * */
+
+.results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.results__legend-item {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 .5rem;
+}
+
+.results__legend-circle {
+  display: inline-block;
+  width: .75rem;
+  height: .75rem;
+  border-radius: .5rem;
+  border: 1px solid #212121;
+  user-select: none;
+  color: rgba(0, 0, 0, 0);
+  margin-right: .25rem;
+}
+
+.results__legend-item:nth-child(1) .results__legend-circle {
+  background: #212121;
+}
+
+.results__legend-item:nth-child(2) .results__legend-circle {
+  background: #BBBBBB;
+  border-color: #BBBBBB;
+}
+
+.results__legend-item:nth-child(3) .results__legend-circle {
+  background: #FFFFFF;
+}
+
+.results__gauges {
+  width: 100%;
+  max-width: 40rem;
+  padding: 0 .5rem;
+  flex-shrink: 0;
+  margin-top: 2rem;
+}
+
+/* * * * * * * * * * * * * * * * * 
+ *
+ * SEATS GAUGE
+ *
+ * * * * * * * * * * * * * * * * */
+
+.seats-gauge {
+  margin-bottom: 2rem;
+}
+
+.seats-gauge__photo-and-texts {
+  display: flex;
+  align-items: center;
+  margin-bottom: .5rem
+}
+
+.seats-gauge__photo {
+  margin-right: .5rem;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 4rem;
+  overflow: hidden;
+  background-position: center;
+  background-size: cover;
+}
+
+.seats-gauge__photo img {
+  width: auto;
+  height: 100%;
+}
+
+.seats-gauge__texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.seats-gauge__name {
+  flex-shrink: 0;
+}
+
+.seats-gauge__dots {
+  line-height: 1rem;
+  font-size: .1rem;
+}
+
+.seats-gauge__dot {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 1rem;
+  margin-right: .25rem;
+  margin-bottom: .25rem;
+  color: rgba(0, 0, 0, 0);
+}
+
+.seats-gauge__dot_to-win {
+  border: 2px solid rgba(33, 33, 33, 1);
+}
+
+.seats-gauge__dot_optional {
+  border: 1px solid rgba(33, 33, 33, .2); 
+}
+
+/* * * * * * * * * * * * * * * * * 
+ *
+ * DETAIL
+ *
+ * * * * * * * * * * * * * * * * */
+
+.detail {
+  border-top: #212121 .25rem solid;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.detail__title {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.detail__scores-bars {
+  width: 100%;
+  max-width: 40rem;
+  padding: .5rem;
+}
+
+/* * * * * * * * * * * * * * * * * 
+ *
+ * SCORES BAR
+ *
+ * * * * * * * * * * * * * * * * */
+
+.scores-bar {
+  margin-bottom: 2rem;
+}
+
+.scores-bar__head {
+  display: flex;
+  align-items: center;
+  margin-bottom: .5rem;
+}
+
+.score-bar {
+  padding: .5rem;
+}
+
+.score-bar .lblb-annotation-title,
+.score-bar .lblb-paragraph {
+  color: #FFFFFF;
+}

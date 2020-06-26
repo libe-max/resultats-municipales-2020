@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "/apps/2020/06/resultats-municipales-2020",
   "dependencies": {
+    "chroma-js": "^2.1.0",
     "libe-components": "^1.2.0",
     "libe-utils": "^1.0.1",
     "react": "^16.13.1",

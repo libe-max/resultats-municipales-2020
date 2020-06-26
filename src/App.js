@@ -8,7 +8,10 @@ import JSXInterpreter from 'libe-components/lib/logic/JSXInterpreter'
 import PageTitle from 'libe-components/lib/text-levels/PageTitle'
 import BlockTitle from 'libe-components/lib/text-levels/BlockTitle'
 import Paragraph from 'libe-components/lib/text-levels/Paragraph'
+import AnnotationTitle from 'libe-components/lib/text-levels/AnnotationTitle'
 import { parseTsv } from 'libe-utils'
+import SeatsGauge from './components/SeatsGauge'
+import ScoresBar from './components/ScoresBar'
 
 export default class App extends Component {
   /* * * * * * * * * * * * * * * * *
@@ -410,8 +413,13 @@ export default class App extends Component {
       impossible_winner_and_not_over: fillTextTemplates(stateTexts[13]),
       detail_headline: fillTextTemplates(stateTexts[14]),
       detail_votes_view_select: fillTextTemplates(stateTexts[15]),
-      detail_seats_view_select: fillTextTemplates(stateTexts[16])
+      detail_seats_view_select: fillTextTemplates(stateTexts[16]),
+      legend_ok: fillTextTemplates(stateTexts[17]),
+      legend_estim: fillTextTemplates(stateTexts[18]),
+      legend_ko: fillTextTemplates(stateTexts[19])
     }
+
+    console.log(currentLists)
 
     /* Display component */
     return <div className={classes.join(' ')}>
@@ -426,17 +434,17 @@ export default class App extends Component {
 
       {/* TABS */}
       <nav className='tabs'>
-        <a href='/#paris'
+        <a href='#paris'
           className={state.active_page === 'paris' ? 'tabs__tab tabs__tab_active' : 'tabs__tab'}
           onClick={e => this.handleActivatePageClick(e, 'paris')}>
           <Paragraph><JSXInterpreter content={texts.first_tab} /></Paragraph>
         </a>
-        <a href='/#marseille'
+        <a href='#marseille'
           className={state.active_page === 'marseille' ? 'tabs__tab tabs__tab_active' : 'tabs__tab'}
           onClick={e => this.handleActivatePageClick(e, 'marseille')}>
           <Paragraph><JSXInterpreter content={texts.second_tab} /></Paragraph>
         </a>
-        <a href='/#lyon'
+        <a href='#lyon'
           className={state.active_page === 'lyon' ? 'tabs__tab tabs__tab_active' : 'tabs__tab'}
           onClick={e => this.handleActivatePageClick(e, 'lyon')}>
           <Paragraph><JSXInterpreter content={texts.third_tab} /></Paragraph>
@@ -446,7 +454,7 @@ export default class App extends Component {
       {/* SUMMARY */}
       <div className='summary'>
         <div className='summary__sectors'>
-          <BlockTitle small>{
+          <BlockTitle small level={3}>{
             nbSectorsOk < 1
             ? <JSXInterpreter content={texts.no_sector_ok} />
             : nbSectorsOk === 1
@@ -472,25 +480,52 @@ export default class App extends Component {
        </div>
 
       {/* RESULTS */}
-      <div>LÉGENDE</div>
-      <div>{
-        [...currentLists.lists]
-          .sort((a, b) => (b.okSeats + b.estimSeats) - (a.okSeats + a.estimSeats))
-          .filter(list => list.name)
-          .map(list => <div>{list.name} {list.head} – {list.okSeats} ok, {list.estimSeats} estimés – {nbSeatsToWin} sièges pour gagner, {nbSeats} sièges au total</div>)
-      }</div>
+      <div className='results'>
+        <div className='results__legend'>
+          <span className='results__legend-item'>
+            <span className='results__legend-circle'>-</span>
+            <span className='results__legend-label'><AnnotationTitle>{texts.legend_ok}</AnnotationTitle></span>
+          </span>
+          <span className='results__legend-item'>
+            <span className='results__legend-circle'>-</span>
+            <span className='results__legend-label'><AnnotationTitle>{texts.legend_estim}</AnnotationTitle></span>
+          </span>
+          <span className='results__legend-item'>
+            <span className='results__legend-circle'>-</span>
+            <span className='results__legend-label'><AnnotationTitle>{texts.legend_ko}</AnnotationTitle></span>
+          </span>
+        </div>
+
+        <div className='results__gauges'>{
+          [...currentLists.lists]
+            .sort((a, b) => (b.okSeats + b.estimSeats) - (a.okSeats + a.estimSeats))
+            .filter(list => list.name)
+            .map(list => <SeatsGauge
+              list_name={list.name}
+              list_head={list.head}
+              list_color={list.color}
+              list_photo={list.photo}
+              ok_seats={list.okSeats}
+              estim_seats={list.estimSeats}
+              win_seats={nbSeatsToWin}
+              total_seats={nbSeats} />)
+        }</div>
+      </div>
 
       {/* DETAIL */}
-      <div>
-        <h3><JSXInterpreter content={texts.detail_headline} /></h3>
-        <div>LÉGENDE</div>
-        <select
+      <div className='detail'>
+        <div className='detail__title'>
+          <BlockTitle small level={3}>
+            <JSXInterpreter content={texts.detail_headline} />
+          </BlockTitle>
+        </div>
+        {/*<select
           defaultValue={state.details_display_mode}
           onChange={this.handleDetailSelectChange}>
           <option value='votes'>{texts.detail_votes_view_select}</option>
           <option value='seats'>{texts.detail_seats_view_select}</option>
-        </select>
-        {currentCity.map(sector => {
+        </select>*/}
+        {/*currentCity.map(sector => {
           return state.details_display_mode === 'votes'
             ? <div>
               <div><strong>{sector.sector} - {sector.status} - {sector.expr} votes exprimés – {sector.seats} sièges</strong></div>
@@ -516,14 +551,35 @@ export default class App extends Component {
               }</div>
               <br/>
             </div>
-        })}
+        })*/}
+        <div className='detail__scores-bars'>
+          {currentCity.map(sector => {
+            const props = {
+              sector_status: sector.status,
+              sector_name: sector.sector,
+              sector_expr: sector.expr,
+              sector_seats: sector.seats,
+              scores: currentLists.lists.map((list, i) => {
+                console.log(sector, list)
+                return {
+                  name: list.name,
+                  short_name: list.short_name,
+                  head: list.head,
+                  color: list.color,
+                  votes: sector[`list${i+1}`],
+                  seats: sector[`R${i+1}`]
+                }
+              })
+            }
+            return <ScoresBar {...props} />
+          })}
+        </div>
       </div>
 
       {/* FOOTER */}
       <div className='lblb-default-apps-footer'>
-        <ShareArticle short iconsOnly tweet={props.meta.tweet} url={props.meta.url} />
-        <ArticleMeta
-          publishedOn='01/01/2020 12:00' authors={[
+        <ShareArticle short iconsOnly tweet={texts.tweet} url={' '} />
+        <ArticleMeta authors={[
             { name: 'Libé Labo', role: 'Production', link: 'https://www.liberation.fr/libe-labo-data-nouveaux-formats,100538' }
           ]}
         />
