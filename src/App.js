@@ -138,13 +138,13 @@ export default class App extends Component {
         lists: parsedData[3].map(city => ({
           city: city.city,
           lists: [
-            { name: city.list1, short_name: city.short1, head: city.head1, color: city.color1, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
-            { name: city.list2, short_name: city.short2, head: city.head2, color: city.color2, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
-            { name: city.list3, short_name: city.short3, head: city.head3, color: city.color3, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
-            { name: city.list4, short_name: city.short4, head: city.head4, color: city.color4, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
-            { name: city.list5, short_name: city.short5, head: city.head5, color: city.color5, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
-            { name: city.list6, short_name: city.short6, head: city.head6, color: city.color6, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
-            { name: city.list7, short_name: city.short7, head: city.head7, color: city.color7, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 }
+            { name: city.list1, short_name: city.short1, head: city.head1, color: city.color1, photo: city.photo1, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
+            { name: city.list2, short_name: city.short2, head: city.head2, color: city.color2, photo: city.photo2, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
+            { name: city.list3, short_name: city.short3, head: city.head3, color: city.color3, photo: city.photo3, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
+            { name: city.list4, short_name: city.short4, head: city.head4, color: city.color4, photo: city.photo4, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
+            { name: city.list5, short_name: city.short5, head: city.head5, color: city.color5, photo: city.photo5, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
+            { name: city.list6, short_name: city.short6, head: city.head6, color: city.color6, photo: city.photo6, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 },
+            { name: city.list7, short_name: city.short7, head: city.head7, color: city.color7, photo: city.photo7, okVotes: 0, estimVotes: 0, okSeats: 0, estimSeats: 0 }
           ]
         })),
         texts: parsedData[4].map(e => e.text)
@@ -418,8 +418,6 @@ export default class App extends Component {
       legend_estim: fillTextTemplates(stateTexts[18]),
       legend_ko: fillTextTemplates(stateTexts[19])
     }
-
-    console.log(currentLists)
 
     /* Display component */
     return <div className={classes.join(' ')}>

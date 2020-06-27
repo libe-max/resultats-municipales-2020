@@ -4,11 +4,11 @@ const currentHostname = typeof window !== 'undefined' ? window.location.hostname
 const config = {
   meta: {
     author: 'Libé Labo',
-    title: 'Libération - ',
+    title: 'Libération - Suivez en direct les résultats à Paris, Lyon et Marseille',
     url: '/apps/2020/06/resultats-municipales-2020',
-    description: '',
-    image: '',
-    xiti_id: 'test',
+    description: "Scrutées de près pour leur écho national mais complexes par leur système par secteurs, les municipales de Marseille, Lyon et Paris sont l'attraction de la soirée électorale de ce dimanche 28 juin. Suivez en direct, secteur après secteur, les résultats dans les trois plus grandes villes de France. Et, peut-être, l'identité de leurs trois nouveaux maires.",
+    image: './social.jpg',
+    xiti_id: 'resultats-municipales-2020',
     tweet: '',
   },
   tracking: {
