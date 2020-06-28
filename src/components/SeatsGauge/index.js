@@ -48,7 +48,7 @@ class SeatsGauge extends Component {
     const photoStyle = {
       backgroundImage: props.list_photo
         ? `url(${props.list_photo})`
-        : `url(https://i.ytimg.com/vi/fDm8JdCAPeM/maxresdefault.jpg)`
+        : ''
     }
 
     return <div className='seats-gauge'>

@@ -24,7 +24,8 @@ const config = {
     ? 'https://libe-labo-2.site/api'
     : `${currentProtocol}//${currentHostname}:3004/api`,
   stylesheet: 'resultats-municipales-2020.css', // The name of the css file hosted at ${statics_url}/styles/apps/
-  spreadsheet: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQtrW86T9T9ZmOcV8PPBcVcC32U9rOy3siUr8NXnK3JG9QRnQ8g-CYuTBbBJspeJ7HEXF62zZw3gWL/pub?gid=1731761155&single=true&output=tsv' // The spreadsheet providing data to the app
+  // spreadsheet: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQtrW86T9T9ZmOcV8PPBcVcC32U9rOy3siUr8NXnK3JG9QRnQ8g-CYuTBbBJspeJ7HEXF62zZw3gWL/pub?gid=1731761155&single=true&output=tsv' // The spreadsheet providing data to the app
+  spreadsheet: './data.tsv'
 }
 
 module.exports = config

@@ -499,6 +499,7 @@ export default class App extends Component {
             .sort((a, b) => (b.okSeats + b.estimSeats) - (a.okSeats + a.estimSeats))
             .filter(list => list.name)
             .map(list => <SeatsGauge
+              key={list.short_name}
               list_name={list.name}
               list_head={list.head}
               list_color={list.color}
@@ -558,7 +559,6 @@ export default class App extends Component {
               sector_expr: sector.expr,
               sector_seats: sector.seats,
               scores: currentLists.lists.map((list, i) => {
-                console.log(sector, list)
                 return {
                   name: list.name,
                   short_name: list.short_name,
@@ -569,7 +569,7 @@ export default class App extends Component {
                 }
               })
             }
-            return <ScoresBar {...props} />
+            return <ScoresBar key={sector.sector} {...props} />
           })}
         </div>
       </div>
