@@ -97,6 +97,7 @@
 .summary__sectors {
   margin-top: 1rem;
   text-transform: uppercase;
+  text-align: center;
   padding: 0 .5rem;
 }
 
@@ -133,10 +134,10 @@
 
 .results__legend-circle {
   display: inline-block;
-  width: .75rem;
-  height: .75rem;
+  width: 1rem;
+  height: 1rem;
   border-radius: .5rem;
-  border: 1px solid #212121;
+  border: 1px solid rgba(33, 33, 33, .4);
   user-select: none;
   color: rgba(0, 0, 0, 0);
   margin-right: .25rem;
@@ -207,24 +208,38 @@
 .seats-gauge__dots {
   line-height: 1rem;
   font-size: .1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.seats-gauge__dots .lblb-slug {
+  margin-right: .25rem;
+  padding: .125rem .25rem;
+  flex-grow: 1;
+  text-align: center;
+  background-color: #212121;
 }
 
 .seats-gauge__dot {
   display: inline-block;
+  /*flex-shrink: 0;*/
   width: 1rem;
   height: 1rem;
   border-radius: 1rem;
   margin-right: .25rem;
-  margin-bottom: .25rem;
+  margin-top: .125rem;
+  margin-bottom: .125rem;
   color: rgba(0, 0, 0, 0);
 }
 
 .seats-gauge__dot_to-win {
-  border: 2px solid rgba(33, 33, 33, 1);
+  border: 1px solid rgba(33, 33, 33, .4);
 }
 
 .seats-gauge__dot_optional {
-  border: 1px solid rgba(33, 33, 33, .2); 
+  border: 1px solid rgba(33, 33, 33, .4);
+  /*display: none;*/
 }
 
 /* * * * * * * * * * * * * * * * * 
@@ -274,6 +289,8 @@
   display: inline-flex;
   flex-direction: column;
   position: relative;
+  overflow-x: hidden;
+  z-index: 1;
 }
 
 .score-bar__hover {
@@ -294,8 +311,8 @@
   line-height: 1rem;
 }
 
-.score-bar:hover .score-bar__hover {
-  display: block;
+.score-bar:hover {
+  z-index: 100;
 }
 
 .score-bar__hover .lblb-annotation-title,
@@ -315,4 +332,7 @@
   color: #999999;
 }
 
-
+.scores-bar__estim,
+.scores-bar__ok {
+  display: flex;  
+}

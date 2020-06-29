@@ -3,6 +3,7 @@ import chroma from 'chroma-js'
 import Paragraph from 'libe-components/lib/text-levels/Paragraph'
 import AnnotationTitle from 'libe-components/lib/text-levels/AnnotationTitle'
 import Annotation from 'libe-components/lib/text-levels/AnnotationTitle'
+import Slug from 'libe-components/lib/text-levels/Slug'
 
 class SeatsGauge extends Component {
   constructor () {
@@ -21,9 +22,12 @@ class SeatsGauge extends Component {
   fillStuff () {
     if (!this.$dots instanceof Element) return
     const $dots = [...this.$dots.querySelectorAll('.seats-gauge__dot')]
-    
-    $dots.forEach($dot => {
+    $dots.forEach(($dot, i) => {
+      const dotNb = i
       $dot.style.background = ''
+      // if (dotNb > this.props.win_seats) {
+      //   $dot.style.display = 'none'
+      // }
     })
 
     new Array(this.props.ok_seats).fill(null).forEach((e, i) => {
@@ -39,6 +43,7 @@ class SeatsGauge extends Component {
       window.setTimeout(() => {
         const bgColor = chroma.mix(this.props.list_color, '#BBBBBB', .7).css()
         $dots[dotNb].style.background = bgColor
+        // $dots[dotNb].style.display = 'inline-block'
       }, 10 * dotNb)
     })
   }
@@ -70,6 +75,7 @@ class SeatsGauge extends Component {
             return <span key={i} className='seats-gauge__dot seats-gauge__dot_to-win' />
           })
         }
+        <Slug small>Majorité absolue</Slug>
         {new Array(props.total_seats - props.win_seats)
           .fill(null)
           .map((slot, i) => {

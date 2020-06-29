@@ -45,7 +45,7 @@ class ScoresBar extends Component {
             key={list.short_name}
             style={style}>
             <AnnotationTitle small>{list.short_name}</AnnotationTitle>
-            <Paragraph small>{100 * list.votes / props.sector_expr}%</Paragraph>
+            <Paragraph small>{(Math.round(1000 * list.votes / props.sector_expr) / 10).toString().replace('.', ',')}%</Paragraph>
             <div className='score-bar__hover'>
               <Paragraph small>{list.name || list.short_name}, {list.votes} voix</Paragraph>
             </div>
@@ -64,7 +64,7 @@ class ScoresBar extends Component {
             key={list.short_name}
             style={style}>
             <AnnotationTitle small>{list.short_name}</AnnotationTitle>
-            <Paragraph small>{100 * list.votes / props.sector_expr}%</Paragraph>
+            <Paragraph small>{(Math.round(1000 * list.votes / props.sector_expr) / 10).toString().replace('.', ',')}%</Paragraph>
             <div className='score-bar__hover'>
               <Paragraph small>{list.name || list.short_name}, {list.votes} voix</Paragraph>
             </div>
